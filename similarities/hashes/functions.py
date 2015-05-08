@@ -42,48 +42,35 @@ def make_hash_string(x):
         return s
 
 
-def uuid_hash(size=11):   
-    x = str(uuid.uuid4()).replace('-', '')
-    hurl = xxhash.xxh64(x).hexdigest()
-    if size:
-        return encode_hash(int(hurl,16))[:size]
-    return encode_hash(int(hurl,16))
-
+def uuid_hash(length=11):
+    value = str(uuid.uuid4()).replace('-', '')
+    return string_hash(value,length)
 
 #Takes any string and returns an 11 character base 64 hash.
-def string_hash(string,length=11):
-    required_bits = length * 6 #64 bits
-    hex_chars = required_bits / 4
-    hurl = xxhash.xxh64(asciify(string)).hexdigest()
-    sha = hurl[:hex_chars]
-    isha = int(sha,16)
-    s = encode_hash(isha)
+def string_hash(value,length=11):
+    s = ''
+    for i in range(0,length,11):
+        s = s + xxhash.xxh64(value+str(i)).hexdigest()
+    s = encode_hash(int(s,16))[:length]
     if len(s) < length:
         s = s + "A" * (length - len(s))
     return s
 
-
-def dict_hash(x):
+def dict_hash(x,length=11):
     s = make_hash_string(x)
-    return string_hash(s)
+    return string_hash(s,length)
 
 
-#Takes any string and returns an 8 digit decimal hash.
-def string_hash_int(string,length=8):
-    hurl = xxhash.xxh64(asciify(string)).hexdigest()
-    return str(int(hurl,16))[:length]
-    
-def string_hash_bit(string,length_in_bits=128):
-    count = length_in_bits / 64
-    result = ''
-    #string = asciify(string)
-    for i in xrange(count):
-        x = xxhash.xxh64(asciify(string)+str(i)).hexdigest()
-        result = result + x
-    x = int(result,16)
+def string_hash_bits(value,length_in_bits=128):
+    ''' Length must be a multiple of 4'''
+    hex_length = length_in_bits / 4
+    s = ''
+    for i in range(0,length_in_bits,64):
+        s = s + xxhash.xxh64(value+str(i)).hexdigest()
+    s = s[:hex_length]
+    x = int(s,16)
     return x
   
-
 
 def make_encoder(baseString):
     size = len(baseString)
@@ -118,19 +105,3 @@ def dupe_hash(tokens,length=3,hash_size=4):
     tokens = list(set((string_hash(token,hash_size) for token in tokens)))
     tokens.sort()
     return "".join(tokens[:length])
-
-def min_hash(tokens,length=8):
-    """
-    Min Hash for similarity measures.
-    """
-    if isinstance(tokens, basestring):
-        tokens = tokens.split()
-
-    result = []
-    for i in range(length):
-        tokens = list(set((string_hash(token) for token in tokens)))
-        tokens.sort()
-        result.append(tokens[0])
-
-    return result
-

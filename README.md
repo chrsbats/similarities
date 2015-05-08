@@ -8,7 +8,7 @@ Utilities for creating similarity metrics and comparisons.
 Examples
 ========
 
-Url-Safe Base64 64-bit hashes
+Url-Safe Base64 64-bit hashes (non-cryptographic)
 
     In [1]: import similarities
 
@@ -23,6 +23,10 @@ Url-Safe Base64 64-bit hashes
     In [5]: similarities.dict_hash(x)
     Out[5]: 'HHZ6x-owq7A'
 
+Want bigger hashes? No problem.
+
+    In [2]: similarities.string_hash("some string",22)
+    Out[2]: 'XjhUAqjLxgMiUMmZxT2xoC'
 
 Single key near duplicate hashing
 
@@ -38,53 +42,77 @@ Single key near duplicate hashing
     Out[4]: '3AReDsxSE7k0'
 
 
-Local Spatial hashing - Min Hash 
+Locality Sensitive Hashing - Min Hash 
 
-    In [12]: similarities.min_hash("this is a similar sentence")
-    Out[12]: 
-    ['5bzX4Z1D5SA',
-     'HPF9dv70SAK',
-     'MV1WxKBY1xD',
-     'GmrT_XYghRK',
-     '8pr1qcIKpOG',
-     'Fk2gqroFiRG',
-     'FWzmAurH1yE',
-     'L3ZOP_tzUbO']
+    In [1]: import similarities 
 
-    In [13]: similarities.min_hash("this is also sentence")
-    Out[13]: 
-    ['5bzX4Z1D5SA',
-     'HPF9dv70SAK',
-     '_4z6jVIPHdD',
-     'GmrT_XYghRK',
-     '8pr1qcIKpOG',
-     'Fk2gqroFiRG',
-     'FWzmAurH1yE',
-     'L3ZOP_tzUbO']
+    In [2]: x = similarities.MinHash("this is a similar sentence",8)
+
+Min Hash creates a number of buckets and uses Jaccard similarity to measure distance between two sets of buckets.
+
+    In [3]: x.hash
+    Out[3]: 
+    ['MkiVvi1CbcE',
+     'GIlKK7R3MeI',
+     'J9eha5g1vDH',
+     '1YeFzYkoMXH',
+     'GNOqfA0pXUG',
+     '-jFgKf4TfpP',
+     '7Z_dtDBRhfJ',
+     '-PEFXVP1ZOD']
+
+    In [4]: y = similarities.MinHash("this is another similar sentence",8)
+
+    In [5]: y.hash
+    Out[5]: 
+    ['6dqjGzE_dLH',
+     '6UUqfI-w8TD',
+     'J9eha5g1vDH',
+     '1YeFzYkoMXH',
+     '-l7dhyvQohF',
+     '-jFgKf4TfpP',
+     'IDyQGCxqVEP',
+     '-PEFXVP1ZOD']
+
+    
+    In [6]: x.distance(y)
+    Out[6]: 0.3333333333333333
+
+    In [7]: y = similarities.MinHash("a completely different sentence unlike the others")
+
+    In [8]: x.distance(y)
+    Out[8]: 0.06666666666666667
+
 
 
 Local Spatial hashing - Charikar Hash
 
+    In [1]: import similarities 
+
     In [2]: x = similarities.CharikarHash("this is a similar sentence")
 
-    In [3]: x.hex()
-    Out[3]: '0xe46523518717fb5cebc0e128e117ab58L'
+Charikar hashes create a bitfield (128 by default) and use hamming distance to measure similarity.
+
+    In [3]: x.string_hash()
+    Out[3]: 'T4h7RQMW_QPX7fxhRNSZkD'
 
     In [4]: y = similarities.CharikarHash("this is another similar sentence")
 
-    In [5]: y.hex()
-    Out[5]: '0xe66d3b58879fab5ca3c2e122e735bb78L'
+    In [5]: y.string_hash()
+    Out[5]: 'R4hZQQJ42RPXr_5hYtTbmD'
 
     In [6]: x.distance(y)
-    Out[6]: 0.1640625
+    Out[6]: 0.171875
 
     In [7]: y = similarities.CharikarHash("a completely different sentence unlike the others")
 
     In [8]: x.distance(y)
-    Out[8]: 0.40625
+    Out[8]: 0.390625
 
 
 TODO:
+
+    Vector hashes - Charikar for vectors and the "hashing trick"
 
     TF-IDF Vectors
 
