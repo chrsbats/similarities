@@ -3,10 +3,13 @@ from similarities.hashes.functions import string_hash, encode_hash, decode_hash
 
 class MinHash(object):
 
-    def __init__(self, tokens, length=8):
+    def __init__(self, tokens, length):
 
-        if isinstance(tokens, basestring):
+        if isinstance(tokens,basestring):
             tokens = tokens.split()
+
+        if isinstance(tokens,dict):
+            tokens = tokens.keys()
 
         result = []
         for i in range(length):
@@ -22,7 +25,7 @@ class MinHash(object):
         """Calculate how different this hash is from another simhash.
         Returns a float from 0.0 to 1.0 (inclusive)
         """
-        return 1.0 - self.similarity(other_hash)
+        return 1.0 - self.distance(other_hash)
 
 
     def distance(self,other_hash):
