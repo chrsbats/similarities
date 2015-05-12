@@ -3,7 +3,7 @@ from similarities.hashes.functions import string_hash, encode_hash, decode_hash
 
 class MinHash(object):
 
-    def __init__(self, tokens, length):
+    def __init__(self, tokens, length=16):
 
         if isinstance(tokens,basestring):
             tokens = tokens.split()
@@ -25,10 +25,6 @@ class MinHash(object):
         """Calculate how different this hash is from another simhash.
         Returns a float from 0.0 to 1.0 (inclusive)
         """
-        return 1.0 - self.distance(other_hash)
-
-
-    def distance(self,other_hash):
         n = 0
         u = 0
         for a,b in zip(self.hash,other_hash.hash):
@@ -40,6 +36,9 @@ class MinHash(object):
         return n / float(u)
         
 
+    def distance(self,other_hash):
+        return 1.0 - self.similarity(other_hash)
+        
     def __trunc__(self):
         return self.hash
 
