@@ -4,6 +4,17 @@ Similarities
 
 Utilities for creating similarity metrics and comparisons.
 
+Requirements
+============
+
+python 2.7
+xxhash
+
+Status
+======
+
+Work in progress
+
 
 Examples
 ========
@@ -146,9 +157,12 @@ Similarities also contains a number of distance metrics for use on bitfields, ve
 
 TODO:
 
-    TF-IDF Vectors
+    Docs for distance metrics
 
     Hilbert curve compression
+
+    TF-IDF Vectors
+
 
     
 
