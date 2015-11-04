@@ -4,5 +4,6 @@ from hashes.functions import *
 from hashes.charikar import CharikarHash
 from hashes.minhash import MinHash
 from hashes.feature_hash import FeatureHash
+from nlp.tfidf import tfidf
 
 
