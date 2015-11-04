@@ -7,7 +7,6 @@ import os
 punctuation = set(punctuation) - set("'-") 
 max_w = 20.0
 
-
 directory = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 #Counts from proceesing all of wikipedia
 name = directory + '/news_idf.jsn.gz'
