@@ -13,7 +13,6 @@ class FeatureHash(object):
         break it into words first, assuming you don't want to iterate
         over the individual characters. Returns nothing.
         
-        Reference used: http://dsrg.mff.cuni.cz/~holub/sw/shash
         """
         if isinstance(tokens,basestring):
             tokens = tokens.split()

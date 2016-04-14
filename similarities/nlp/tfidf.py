@@ -9,18 +9,26 @@ max_w = 20.0
 
 directory = os.path.abspath(os.path.join(os.path.dirname(__file__)))
 #Counts from proceesing all of wikipedia
-name = directory + '/news_idf.jsn.gz'
-f = gzip.open(name, 'rb')
-idf = ujson.loads(f.read())
-f.close()
+
+
+_idf = None
+
+def idf():
+    global _idf
+    if not _idf:
+        name = directory + '/news_idf.jsn.gz'
+        f = gzip.open(name, 'rb')
+        _idf = ujson.loads(f.read())
+        f.close()
+    return _idf
 
 def valid_word(w):
     #two letter words are not generally helpful
     if len(w) < 3:
         return False
     #First 76 words are stop words. Word 80 is "U.S."
-    if w in idf:
-        if idf[w][0] < 80:
+    if w in idf():
+        if idf()[w][0] < 80:
             return False
     return True
 
@@ -55,8 +63,8 @@ def tfidf(text):
     keywords = {}
     for w in words.keys():
         if valid_word(w):
-            if w in idf:
-                result[w] = words[w] * idf[w][1]
+            if w in idf():
+                result[w] = words[w] * idf()[w][1]
             else:
                 #For unique phrases, don't match large ngrams for sake of speed. 
                 if len(w.split()) == 1:
